@@ -6,6 +6,8 @@ setup(name='ents-plinko',
       url='https://github.com/ENTS-Source/Plinko',
       install_requires=[
           'configobj',
-          'pygame'
+          'pygame',
+          'pyserial',
+          'recordclass'
       ],
       zip_safe=False)

@@ -53,6 +53,7 @@ void setup() {
 int startIndex = 0;
 bool lastModeState = false;
 long lastUpdate = 0; // to prevent quickly changing peg colors
+bool bucketStates[NUM_BUCKETS];
 
 void loop() {
   // check for mode button
@@ -96,7 +97,10 @@ void loop() {
 
     // check buckets
     for(int i = 0; i < NUM_BUCKETS; i++) {
-      if(bucketActive(i)) {
+      bool isActive = bucketActive(i);
+      bool wasActive = bucketStates[i];
+      bucketStates[i] = isActive;
+      if(isActive && !wasActive) {
         Serial.println(bucketPointValues[i]);
         break;
       }

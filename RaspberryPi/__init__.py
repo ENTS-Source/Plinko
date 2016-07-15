@@ -36,16 +36,20 @@ if config.game.fullscreen:
     pygame.display.toggle_fullscreen()
 
 # Start the game communications
-# TODO
-#print("Starting communications")
-#from communication.device import PlinkoBoard
-#leftBoard = PlinkoBoard(config.devices.left)
-#rightBoard = PlinkBoard(config.devices.right)
+print("Starting communications")
+from communication.device import PlinkoBoard
+leftBoard = PlinkoBoard(config.devices.left)
+rightBoard = PlinkoBoard(config.devices.right)
 
 # Start the score tracker
-# TODO
-#from scoretracker import ScoreTracker
-#scoreTracker = ScoreTracker()
+print("Starting score tracker")
+from scoretracker import ScoreTracker
+scoreTracker = ScoreTracker()
+
+# Start the screen manager
+print("Preparing screen")
+from screen import Screen
+gameScreen = Screen(screen, scoreTracker)
 
 # Prepare for the game loop
 gameRunning = True
@@ -57,12 +61,10 @@ def closeAll():
     print("Shutting down engine...")
     pygame.quit()
     print("Shutting down devices...")
-    # TODO
-    #leftBoard.close()
-    #rightBoard.close()
+    leftBoard.close()
+    rightBoard.close()
     print("Shutting down score tracker...")
-    # TODO
-    #scoreTracker.close()
+    scoreTracker.close()
     print("Exiting...")
     sys.exit()
 def millis():
@@ -81,7 +83,17 @@ while gameRunning:
         if event.type == pygame.QUIT:
             closeAll()
     rStart = millis()
-    # TODO: Check game boards and draw states
+    hasUpdate = False
+    if leftBoard.newScore:
+        scoreTracker.recordScore(0, leftBoard.score) # player 0
+        leftBoard.newScore = False
+        hasUpdate = True
+    if rightBoard.newScore:
+        scoreTracker.recordScore(1, rightBoard.score) # player 1
+        rightBoard.newScore = False
+        hasUpdate = True
+    if hasUpdate:
+        gameScreen.render(leftBoard.score, rightBoard.score)
     end = millis()
     rTime = end - rStart
     if rTime > maxRenderTime:
