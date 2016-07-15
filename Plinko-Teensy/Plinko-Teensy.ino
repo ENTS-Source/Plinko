@@ -87,7 +87,7 @@ void loop() {
 
       if(millis() - pegLastChanged[i] < random(PEG_SPARK_MIN, PEG_SPARK_MAX)) {
         if(millis() - lastUpdate > PEG_SPARK_DUR) {
-          leds[i] = CHSV(random8(), 255, random8());
+          leds[i] = CHSV(random8(), 255, 255);
           lastUpdate = millis();
         }
       } else {
