@@ -13,7 +13,7 @@ LARGE_FONT = pygame.font.Font(fontEntsRegularPath, 65)
 EXTRA_LARGE_FONT = pygame.font.Font(fontEntsRegularPath, 90)
 SUPER_LARGE_FONT = pygame.font.Font(fontEntsRegularPath, 110)
 SUPER_EXTRA_LARGE_FONT = pygame.font.Font(fontEntsRegularPath, 160) # dat name
-EXTRAORDINARY_FONT = pygame.font.Font(fontEntsRegularPath, 550) # dat name (x2)
+EXTRAORDINARY_FONT = pygame.font.Font(fontEntsRegularPath, 450) # dat name (x2)
 
 # Specific
 HEADER_FONT = SUPER_EXTRA_LARGE_FONT
