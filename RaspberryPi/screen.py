@@ -121,15 +121,15 @@ class Screen:
         pointsRect = pointsLbl.get_rect()
         countRect = countLbl.get_rect()
         if playerIndex == 0: # left side
-            scorePos.x = self.__margin * 4
-            scorePos.y = self.__headerHeight + (self.__margin * 4) - 100
+            scorePos.x = self.__margin * 6
+            scorePos.y = self.__headerHeight + (self.__margin * 8) - 100
             pointsPos.x = self.__margin * 2
             pointsPos.y = sr.height - self.__margin - pointsRect.height
             countPos.x = (((sr.width / 2) - 100) - self.__margin) - countRect.width - self.__margin
             countPos.y = sr.height - self.__margin - countRect.height
         else: # right side
-            scorePos.x = sr.width - (self.__margin * 4) - scoreRect.width
-            scorePos.y = sr.height - (self.__margin * 4) - scoreRect.height + 100 + self.__margin
+            scorePos.x = sr.width - (self.__margin * 6) - scoreRect.width
+            scorePos.y = sr.height - (self.__margin * 8) - scoreRect.height + 100 + self.__margin
             pointsPos.x = sr.width - self.__margin - pointsRect.width - self.__margin
             pointsPos.y = self.__headerHeight + self.__margin
             countPos.x = (((sr.width / 2) + 100) - self.__margin) + self.__margin + self.__margin
