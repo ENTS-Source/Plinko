@@ -1,17 +1,17 @@
 #include <FastLED.h>
 
 // Plinko configuration
-#define LED_PIN       12  // The data pin for the LEDs
-#define MODE_BTN_PIN  11  // The button used to change the display mode
-#define PEG_PIN_START 14  // Peg pin number start. End is start + NUM_LEDS
-#define BUK_PIN_START 19  // Bucket pin number start. End is start + NUM_BUCKETS
-#define NUM_LEDS      4   // The number of LEDs/pegs
+#define LED_PIN       22  // The data pin for the LEDs
+#define MODE_BTN_PIN  23  // The button used to change the display mode
+#define PEG_PIN_START 1   // Peg pin number start. End is start + NUM_LEDS
+#define BUK_PIN_START 14  // Bucket pin number start. End is start + NUM_BUCKETS
+#define NUM_LEDS      9   // The number of LEDs/pegs
 #define NUM_BUCKETS   5   // The number of buckets. Used to calculate which bucket was activated
 #define PEG_SPARK_MIN 150 // milliseconds delay minimum when a peg is tripped
 #define PEG_SPARK_MAX 250 // milliseconds delay maximum when a peg is tripped
 #define PEG_SPARK_DUR 60  // milliseconds between peg 'spark' color changes
 #define PEG_COOLDOWN  250 // milliseconds for a peg to not be counted once activated for points
-int pegPointValues[] = { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+int pegPointValues[] = { 20, 20, 5, 5, 30, 30, 5, 5 };
 int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 
 // LED Configuration
@@ -123,7 +123,7 @@ void loop() {
 }
 
 bool pegActive(int num) {
-  return debounceReadPin(num + PEG_PIN_START);
+  return digitalReadFast(num + PEG_PIN_START) == LOW;
 }
 
 bool bucketActive(int num) {
