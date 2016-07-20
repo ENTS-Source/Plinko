@@ -2,25 +2,22 @@
 
 // Plinko configuration
 #define LED_PIN       12  // The data pin for the LEDs
-#define NUM_LEDS      4   // The number of LEDs/pegs
-#define NUM_BUCKETS   5   // The number of buckets. Used to calculate which bucket was activated
 #define MODE_BTN_PIN  11  // The button used to change the display mode
 #define PEG_PIN_START 14  // Peg pin number start. End is start + NUM_LEDS
 #define BUK_PIN_START 19  // Bucket pin number start. End is start + NUM_BUCKETS
+#define NUM_LEDS      4   // The number of LEDs/pegs
+#define NUM_BUCKETS   5   // The number of buckets. Used to calculate which bucket was activated
 #define PEG_SPARK_MIN 150 // milliseconds delay minimum when a peg is tripped
 #define PEG_SPARK_MAX 250 // milliseconds delay maximum when a peg is tripped
 #define PEG_SPARK_DUR 60  // milliseconds between peg 'spark' color changes
-int bucketPointValues[] = { 10, 20, 50, 20, 10 }; // point values for each bucket
-
-// General configuration for wiring
-#define PIN_HIGH      LOW
-#define BTN_TYPE      INPUT_PULLUP
+#define PEG_COOLDOWN  250 // milliseconds for a peg to not be counted once activated for points
+int pegPointValues[] = { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 
 // LED Configuration
 #define L_BRIGHTNESS    255
 #define L_TYPE          NEOPIXEL
-#define L_COLOR_ORDER   GRB
-#define L_UPD_PER_SEC   100 // Number of updates per second (used in display mode)
+#define L_UPD_PER_SEC   100 // Number of updates per second (used in dance mode)
 
 // Global variables
 CRGB leds[NUM_LEDS];
@@ -28,9 +25,24 @@ long pegLastChanged[NUM_LEDS];
 CRGBPalette16 currentPalette;
 TBlendType currentBlending;
 bool danceMode = true; // start up in 'dance' mode
+int startIndex = 0;
+bool lastModeState = false;
+long lastUpdate = 0; // to prevent quickly changing peg colors
+bool bucketStates[NUM_BUCKETS];
+int points = 0;
+
+// Prototypes
+void checkPalette();
+void showPalette(uint8_t colorIndex);
+bool debounceReadPin(int pin);
+bool bucketActive(int num);
+bool pegActive(int num);
 
 void setup() {
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
   delay(3000); // safety delay for power up
+  digitalWrite(13, LOW);
 
   FastLED.addLeds<L_TYPE, LED_PIN>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(L_BRIGHTNESS);
@@ -39,21 +51,16 @@ void setup() {
   currentBlending = LINEARBLEND;
 
   // Configure pins
-  pinMode(MODE_BTN_PIN, BTN_TYPE);
   for(int i = 0; i < NUM_LEDS; i++) {
-    pinMode(i + PEG_PIN_START, BTN_TYPE);
+    pinMode(i + PEG_PIN_START, INPUT_PULLUP);
   }
   for(int i = 0; i < NUM_BUCKETS; i++) {
-    pinMode(i + BUK_PIN_START, BTN_TYPE);
+    pinMode(i + BUK_PIN_START, INPUT_PULLUP);
   }
+  pinMode(MODE_BTN_PIN, INPUT_PULLUP);
 
   Serial.begin(9600);
 }
-
-int startIndex = 0;
-bool lastModeState = false;
-long lastUpdate = 0; // to prevent quickly changing peg colors
-bool bucketStates[NUM_BUCKETS];
 
 void loop() {
   // check for mode button
@@ -82,6 +89,10 @@ void loop() {
     // check pegs
     for(int i = 0; i < NUM_LEDS; i++) {
       if(pegActive(i)) {
+        if (millis() - pegLastChanged[i] >= PEG_COOLDOWN) {
+          points += pegPointValues[i];
+          Serial.println("P" + String(points));
+        }
         pegLastChanged[i] = millis();
       }
 
@@ -101,7 +112,8 @@ void loop() {
       bool wasActive = bucketStates[i];
       bucketStates[i] = isActive;
       if(isActive && !wasActive) {
-        Serial.println(bucketPointValues[i]);
+        Serial.println("F" + String(bucketPointValues[i] + points));
+        points = 0;
         break;
       }
     }
@@ -111,17 +123,17 @@ void loop() {
 }
 
 bool pegActive(int num) {
-  return debounceReadPin(num + PEG_PIN_START); // TODO: Read from shift register if proven better; and maybe drop debounce?
+  return debounceReadPin(num + PEG_PIN_START);
 }
 
 bool bucketActive(int num) {
-  return debounceReadPin(num + BUK_PIN_START); // TODO: Read from shift register if proven better
+  return debounceReadPin(num + BUK_PIN_START);
 }
 
 bool debounceReadPin(int pin) {
-  if(digitalRead(pin) == PIN_HIGH) {
+  if(digitalRead(pin) == LOW) {
     delay(10); // debounce
-    return digitalRead(pin) == PIN_HIGH;
+    return digitalRead(pin) == LOW;
   }
   return false;
 }
