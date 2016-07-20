@@ -6,6 +6,7 @@ class PlinkoBoard:
     def __init__(self, port):
         self._initPort(port)
         self.score = 0
+        self.scoreUpdated = False;
         self.newScore = False
 
     def _initPort(self, port):
@@ -23,8 +24,12 @@ class PlinkoBoard:
                 val = self.__port.readline()
                 if val == '':
                     continue
-                self.score = int(val)
-                self.newScore = True
+                self.score = int(val[1:]) # strip off first character`
+                if val[0] == 'P':
+                    self.scoreUpdated = True
+                elif val[0] == 'F':
+                    self.scoreUpdated = True
+                    self.newScore = True
                 print("Read score: " + val)
             except IOError as e:
                 pass

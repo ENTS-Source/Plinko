@@ -86,13 +86,17 @@ while gameRunning:
             closeAll()
     rStart = millis()
     hasUpdate = False
-    if leftBoard.newScore:
-        scoreTracker.recordScore(0, leftBoard.score) # player 0
+    if leftBoard.newScore or leftBoard.scoreUpdated:
+        if leftBoard.newScore:
+            scoreTracker.recordScore(0, leftBoard.score) # player 0
         leftBoard.newScore = False
+        leftBoard.scoreUpdated = False
         hasUpdate = True
-    if rightBoard.newScore:
-        scoreTracker.recordScore(1, rightBoard.score) # player 1
+    if rightBoard.newScore or rightBoard.scoreUpdated:
+        if rightBoard.newScore:
+            scoreTracker.recordScore(1, rightBoard.score) # player 1
         rightBoard.newScore = False
+        rightBoard.scoreUpdated = False
         hasUpdate = True
     if hasUpdate:
         gameScreen.render(leftBoard.score, rightBoard.score)
