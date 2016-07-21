@@ -49,33 +49,33 @@ class Screen:
 
         # player area 1 (left)
         points = [
-            [self.__margin, headerBottom + self.__margin], # top left
+            [self.__margin, headerBottom + self.__margin + 85], # top left
             [self.__margin, sr.height - self.__margin], # bottom left
             [(centerX - 100) - self.__margin, sr.height - self.__margin], # bottom right
-            [(centerX + 100) - self.__margin, headerBottom + self.__margin] # top right
+            [(centerX + 100) - self.__margin, headerBottom + self.__margin + 85] # top right
         ]
         pygame.gfxdraw.aapolygon(self.__screen, points, WIDGET_BACKGROUND_COLOR1)
         pygame.gfxdraw.filled_polygon(self.__screen, points, WIDGET_BACKGROUND_COLOR1)
 
         # player area 2 (right)
         points = [
-            [(centerX + 100) + self.__margin, headerBottom + self.__margin], # top left
+            [(centerX + 100) + self.__margin, headerBottom + self.__margin + 85], # top left
             [(centerX - 100) + self.__margin, sr.height - self.__margin], # bottom left
             [sr.width - self.__margin, sr.height - self.__margin], # bottom right
-            [sr.width - self.__margin, headerBottom + self.__margin] # top right
+            [sr.width - self.__margin, headerBottom + self.__margin + 85] # top right
         ]
         pygame.gfxdraw.aapolygon(self.__screen, points, WIDGET_BACKGROUND_COLOR2)
         pygame.gfxdraw.filled_polygon(self.__screen, points, WIDGET_BACKGROUND_COLOR2)
 
         # draw "total points" for player areas
         lbl = LEADERBOARD_RANK_FONT.render("Total Points", 1, PRIMARY_TEXT_COLOR)
-        self.__screen.blit(lbl, (self.__margin * 2, sr.height - 160)) # left side
+        self.__screen.blit(lbl, (self.__margin * 2, sr.height - 140)) # left side
         self.__screen.blit(lbl, (sr.width - (self.__margin * 2) - lbl.get_rect().width, self.__headerHeight + (self.__margin * 2) + 80)) # right side
 
         # draw "total players" for player areas
         lbl = LEADERBOARD_RANK_FONT.render("Total Players", 1, PRIMARY_TEXT_COLOR)
-        self.__screen.blit(lbl, ((centerX - 100) - (self.__margin * 2) - lbl.get_rect().width, sr.height - 160)) # left side
-        self.__screen.blit(lbl, ((centerX + 100) + self.__margin, self.__headerHeight + (self.__margin * 2) + 80)) # right side
+        self.__screen.blit(lbl, ((centerX - 100) - (self.__margin * 2) - lbl.get_rect().width, sr.height - 140)) # left side
+        self.__screen.blit(lbl, ((centerX + 100) + self.__margin + 5, self.__headerHeight + (self.__margin * 2) + 80)) # right side
 
         self._render_leaderboard()
         self._render_player(0, 0)
@@ -126,7 +126,7 @@ class Screen:
         countRect = countLbl.get_rect()
         if playerIndex == 0: # left side
             scorePos.x = self.__margin * 6
-            scorePos.y = self.__headerHeight + (self.__margin * 8) - 100
+            scorePos.y = self.__headerHeight + (self.__margin * 8) - 20
             pointsPos.x = self.__margin * 2
             pointsPos.y = sr.height - self.__margin - pointsRect.height
             countPos.x = (((sr.width / 2) - 100) - self.__margin) - countRect.width - self.__margin
@@ -135,9 +135,9 @@ class Screen:
             scorePos.x = sr.width - (self.__margin * 6) - scoreRect.width
             scorePos.y = sr.height - (self.__margin * 8) - scoreRect.height + 100 + self.__margin
             pointsPos.x = sr.width - self.__margin - pointsRect.width - self.__margin
-            pointsPos.y = self.__headerHeight + self.__margin
-            countPos.x = (((sr.width / 2) + 100) - self.__margin) + self.__margin + self.__margin
-            countPos.y = self.__headerHeight + self.__margin
+            pointsPos.y = self.__headerHeight + self.__margin  + 125
+            countPos.x = (((sr.width / 2) + 105) - self.__margin) + self.__margin + self.__margin
+            countPos.y = self.__headerHeight + self.__margin + 125
         # render labels
         self.__screen.blit(scoreLbl, (scorePos.x, scorePos.y))
         self.__screen.blit(pointsLbl, (pointsPos.x, pointsPos.y))
@@ -169,10 +169,11 @@ class Screen:
         dirty = []
         sr = self.__screen.get_rect()
         index = 1
+        totalScores = len(self.__scoreTracker.topScores)
         x = self.__margin
         y = self.__headerHeight + self.__margin
         h = 75
-        w = (sr.width - self.__margin - self.__margin) / float(len(self.__scoreTracker.topScores))
+        w = (sr.width - self.__margin - (self.__margin * totalScores)) / float(totalScores)
         for score in self.__scoreTracker.topScores:
             rect = (x, y, w, h)
             aa_filled_rounded_rectangle(self.__screen, rect, WIDGET_BACKGROUND_COLOR1, 0.2)
@@ -185,7 +186,7 @@ class Screen:
             lx = x + self.__margin + (self.__margin / 2)
             ly = y
             self.__screen.blit(lbl, (lx, ly))
-            x = (index * w) + self.__margin
+            x = x + w + self.__margin
             index = index + 1
             dirty.append(rect)
         return dirty

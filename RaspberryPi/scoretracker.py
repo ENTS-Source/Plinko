@@ -48,11 +48,14 @@ class ScoreTracker:
             self.totalGames = 0
         print("Total games played: " + str(self.totalGames))
         # Collect top 5 scores
+        self._calc_top_scores()
+
+    def _calc_top_scores(self):
         self.topScores = []
         cursor = self.__db.cursor()
         cursor.execute("SELECT score, player FROM scores ORDER BY score DESC LIMIT 5");
         records = cursor.fetchall()
-        if record is not None:
+        if records is not None:
             for record in records:
                 self.topScores.append([record[0], record[1]])
         while len(self.topScores) < 5:
@@ -65,6 +68,7 @@ class ScoreTracker:
         self.__db.commit()
         self.playerScores[player] += score
         self.totalGames += 1
+        self._calc_top_scores()
 
     def close(self):
         self.__db.close()
