@@ -13,8 +13,8 @@ print("Right device = " + config.devices.right)
 
 print("Setting up buttons")
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(config.buttons.btn1_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(config.buttons.btn2_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(config.buttons.btn1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(config.buttons.btn2_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 print("Preparing game...")
 import pygame
@@ -121,10 +121,10 @@ while gameRunning:
     sleep(0.1) # for catchup
 
     # check for shutdown buttons
-    if(GPIO.input(config.buttons.btn1_pin) == 1):
+    if(GPIO.input(config.buttons.btn1_pin) == 0):
         print("Shutdown button pressed, forcing exit on next loop")
         forceExit = True
-    if(GPIO.input(config.buttons.btn2_pin) == 1):
+    if(GPIO.input(config.buttons.btn2_pin) == 0):
         print("Clearing visible scores")
         leftBoard.score = 0
         leftBoard.scoreUpdated = True

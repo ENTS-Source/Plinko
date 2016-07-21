@@ -67,6 +67,7 @@ class ScoreTracker:
         cursor.execute("INSERT INTO scores (score, player, recorded) VALUES (?, ?, datetime('now'))", (score, player,))
         self.__db.commit()
         self.playerScores[player] += score
+        self.gameCounts[player] += 1
         self.totalGames += 1
         self._calc_top_scores()
 
