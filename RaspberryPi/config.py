@@ -11,7 +11,7 @@ class Configuration:
         config = ConfigObj(path)
         self.game = GameInfo(config['Game'])
         self.devices = DevicesInfo(config['Devices'])
-        self.buttons = ButtonInfo(cofnig['Buttons'])
+        self.buttons = ButtonInfo(config['Buttons'])
 
     @staticmethod
     def __getconf(target_path):
