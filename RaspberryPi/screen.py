@@ -77,6 +77,7 @@ class Screen:
         self.__screen.blit(lbl, ((centerX - 100) - (self.__margin * 2) - lbl.get_rect().width, sr.height - 160)) # left side
         self.__screen.blit(lbl, ((centerX + 100) + self.__margin, self.__headerHeight + (self.__margin * 2) + 80)) # right side
 
+        self._render_leaderboard()
         self._render_player(0, 0)
         self._render_player(1, 0)
 
@@ -92,6 +93,9 @@ class Screen:
         for a in d: dirty.append(a)
 
         d = self._render_totals()
+        for a in d: dirty.append(a)
+
+        d = self._render_leaderboard()
         for a in d: dirty.append(a)
 
         pygame.display.update(dirty)
