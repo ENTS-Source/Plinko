@@ -11,6 +11,7 @@ class Configuration:
         config = ConfigObj(path)
         self.game = GameInfo(config['Game'])
         self.devices = DevicesInfo(config['Devices'])
+        self.buttons = ButtonInfo(cofnig['Buttons'])
 
     @staticmethod
     def __getconf(target_path):
@@ -30,3 +31,8 @@ class DevicesInfo:
     def __init__(self, section):
         self.left = section['left']
         self.right = section['right']
+
+class ButtonInfo:
+    def __init__(self, section):
+        self.btn1_pin = int(section['btn1_pin'])
+        self.btn2_pin = int(section['btn2_pin'])
