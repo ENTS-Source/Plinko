@@ -171,8 +171,8 @@ class Screen:
         index = 1
         x = self.__margin
         y = self.__headerHeight + self.__margin
-        height = 75
-        width = (sr.width - self.__margin - self.__margin) / float(len(self.__scoreTracker.topScores))
+        h = 75
+        w = (sr.width - self.__margin - self.__margin) / float(len(self.__scoreTracker.topScores))
         for score in self.__scoreTracker.topScores:
             rect = (x, y, w, h)
             aa_filled_rounded_rectangle(self.__screen, rect, WIDGET_BACKGROUND_COLOR1, 0.2)
