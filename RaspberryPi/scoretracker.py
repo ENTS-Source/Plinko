@@ -51,7 +51,7 @@ class ScoreTracker:
         self.topScores = []
         cursor = self.__db.cursor()
         cursor.execute("SELECT score, player FROM scores ORDER BY score DESC LIMIT 5");
-        records, = cursor.fetchall()
+        records = cursor.fetchall()
         if record is not None:
             for record in records:
                 self.topScores.append([record[0], record[1]])
