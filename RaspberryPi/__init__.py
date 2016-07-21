@@ -39,7 +39,8 @@ if config.game.fullscreen:
 print("Starting communications")
 from communication.device import PlinkoBoard
 leftBoard = PlinkoBoard(config.devices.left)
-rightBoard = PlinkoBoard(config.devices.right)
+#rightBoard = PlinkoBoard(config.devices.right)
+leftBoard = rightBoard # TODO: Remove debugging
 
 # Start the score tracker
 print("Starting score tracker")
