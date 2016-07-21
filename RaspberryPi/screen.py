@@ -160,3 +160,28 @@ class Screen:
         dirty.append(self.__lastTotalArea)
         self.__screen.blit(lbl, pos)
         return dirty
+
+    def _render_leaderboard(self):
+        dirty = []
+        sr = self.__screen.get_rect()
+        index = 1
+        x = self.__margin
+        y = self.__headerHeight + self.__margin
+        height = 75
+        width = (sr.width - self.__margin - self.__margin) / float(len(self.__scoreTracker.topScores))
+        for score in self.__scoreTracker.topScores:
+            rect = (x, y, w, h)
+            aa_filled_rounded_rectangle(self.__screen, rect, WIDGET_BACKGROUND_COLOR1, 0.2)
+            lbl = LEADERBOARD_RANK_FONT.render("#" + str(index), 1, MUTED_TEXT_COLOR)
+            area = lbl.get_rect()
+            lx = (x + w) - area.width - self.__margin - (self.__margin / 2)
+            ly = (y + h) - area.height
+            self.__screen.blit(lbl, (lx, ly))
+            lbl = LEADERBOARD_SCORE_FONT.render(str(score[0]), 1, SCORE_TEXT_COLOR)
+            lx = x + self.__margin + (self.__margin / 2)
+            ly = y
+            self.__screen.blit(lbl, (lx, ly))
+            x = (index * w) + self.__margin
+            index = index + 1
+            dirty.append(rect)
+        return dirty
