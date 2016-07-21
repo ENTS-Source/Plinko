@@ -11,7 +11,7 @@
 #define PEG_SPARK_MAX 250 // milliseconds delay maximum when a peg is tripped
 #define PEG_SPARK_DUR 60  // milliseconds between peg 'spark' color changes
 #define PEG_COOLDOWN  250 // milliseconds for a peg to not be counted once activated for points
-int pegPointValues[] = { 20, 20, 5, 5, 30, 30, 5, 5 };
+int pegPointValues[] = { 5, 5, 30, 30, 10, 5, 5, 20, 20 };
 int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 
 // LED Configuration
@@ -21,7 +21,7 @@ int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 
 // Global variables
 CRGB leds[NUM_LEDS];
-long pegLastChanged[NUM_LEDS];
+unsigned long pegLastChanged[NUM_LEDS];
 CRGBPalette16 currentPalette;
 TBlendType currentBlending;
 bool danceMode = true; // start up in 'dance' mode
@@ -90,7 +90,7 @@ void loop() {
     for(int i = 0; i < NUM_LEDS; i++) {
       if(pegActive(i)) {
         if (millis() - pegLastChanged[i] >= PEG_COOLDOWN) {
-          points += pegPointValues[i];
+          points = points + pegPointValues[i];
           Serial.println("P" + String(points));
         }
         pegLastChanged[i] = millis();
