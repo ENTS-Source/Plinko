@@ -1,8 +1,8 @@
 # ENTS Plinko Raspberry Pi
 # ------------------------------------------------------------------------------
 # Competition display for ENTS Plinko
-
-# TODO: Shutdown button
+import RPi.GPIO as GPIO
+import subprocess
 
 from config import Configuration
 config = Configuration()
@@ -11,11 +11,17 @@ print("Game fullscreen = " + str(config.game.fullscreen))
 print("Left device = " + config.devices.left)
 print("Right device = " + config.devices.right)
 
+print("Setting up buttons")
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(config.buttons.btn1_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(config.buttons.btn2_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 print("Preparing game...")
 import pygame
 import os
 import sys
 from time import time, sleep
+
 
 # Set up engine
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
@@ -67,6 +73,9 @@ def closeAll():
     print("Shutting down score tracker...")
     scoreTracker.close()
     print("Exiting...")
+    if forceExit:
+        print("Force exit set, running shutdown command")
+        subprocess.Popen('shutdown -h 1', shell=True) # 1 minute shutdown
     sys.exit()
 def millis():
     return int(round(time() * 1000))
@@ -111,4 +120,13 @@ while gameRunning:
         print("!! NEW MAXIMUM RENDER TIME: " + str(maxRenderTime) + "ms (" + str(timesOver1s) + " times over 1s)")
     sleep(0.1) # for catchup
 
-    # TODO: Shutdown button
+    # check for shutdown buttons
+    if(GPIO.input(config.buttons.btn1_pin) == 1):
+        print("Shutdown button pressed, forcing exit on next loop")
+        forceExit = True
+    if(GPIO.input(config.buttons.btn2_pin) == 1):
+        print("Clearing visible scores")
+        leftBoard.score = 0
+        leftBoard.scoreUpdated = True
+        rightBoard.score = 0
+        rightBoard.scoreUpdated = True
