@@ -22,7 +22,7 @@ class PlinkoBoard:
                 time.sleep(0.1) # for thread catchup
 
                 val = self.__port.readline()
-                if val == '':
+                if val == '' or val[0] == 'H': # H = heartbeat
                     continue
                 self.score = int(val[1:]) # strip off first character`
                 if val[0] == 'P':

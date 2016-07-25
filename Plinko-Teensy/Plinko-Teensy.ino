@@ -11,6 +11,7 @@
 #define PEG_SPARK_MAX 250 // milliseconds delay maximum when a peg is tripped
 #define PEG_SPARK_DUR 60  // milliseconds between peg 'spark' color changes
 #define PEG_COOLDOWN  250 // milliseconds for a peg to not be counted once activated for points
+#define BUK_COOLDOWN  5000
 int pegPointValues[] = { 5, 5, 30, 30, 10, 5, 5, 20, 20 };
 int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 
@@ -22,6 +23,7 @@ int bucketPointValues[] = { 10, 20, 50, 20, 10 };
 // Global variables
 CRGB leds[NUM_LEDS];
 unsigned long pegLastChanged[NUM_LEDS];
+unsigned long bucketLastChanged[NUM_BUCKETS];
 CRGBPalette16 currentPalette;
 TBlendType currentBlending;
 bool danceMode = true; // start up in 'dance' mode
@@ -30,6 +32,7 @@ bool lastModeState = false;
 long lastUpdate = 0; // to prevent quickly changing peg colors
 bool bucketStates[NUM_BUCKETS];
 int points = 0;
+unsigned long lastHeartbeat = 0;
 
 // Prototypes
 void checkPalette();
@@ -53,9 +56,11 @@ void setup() {
   // Configure pins
   for(int i = 0; i < NUM_LEDS; i++) {
     pinMode(i + PEG_PIN_START, INPUT_PULLUP);
+    pegLastChanged[i] = 0;
   }
   for(int i = 0; i < NUM_BUCKETS; i++) {
     pinMode(i + BUK_PIN_START, INPUT_PULLUP);
+    bucketLastChanged[i] = 0;
   }
   pinMode(MODE_BTN_PIN, INPUT_PULLUP);
 
@@ -63,6 +68,11 @@ void setup() {
 }
 
 void loop() {
+  if(millis() - lastHeartbeat > 1000) {
+    Serial.println("H");
+    lastHeartbeat = millis(); 
+  }
+  
   // check for mode button
   bool modeState = debounceReadPin(MODE_BTN_PIN);
   if(modeState && modeState != lastModeState) {
@@ -111,8 +121,12 @@ void loop() {
       bool isActive = bucketActive(i);
       bool wasActive = bucketStates[i];
       bucketStates[i] = isActive;
-      if(isActive && !wasActive) {
-        Serial.println("F" + String(bucketPointValues[i] + points));
+      if(isActive && !wasActive && (millis() - bucketLastChanged[i] > BUK_COOLDOWN)) {
+        if(millis() - bucketLastChanged[i] > BUK_COOLDOWN) {
+          points += bucketPointValues[i];
+          Serial.println("F" + String(points));
+        }
+        bucketLastChanged[i] = millis();
         points = 0;
         break;
       }
